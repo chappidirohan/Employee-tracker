@@ -1,15 +1,15 @@
-package com.example.demo.Controller;
+package com.example.EmployeeTrackingSystem.Controller;
 
-import com.example.demo.Jwt.JwtUtils;
-import com.example.demo.Repository.RoleRepository;
-import com.example.demo.Repository.UserRepository;
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.entity.Role;
+import com.example.EmployeeTrackingSystem.Jwt.JwtUtils;
+import com.example.EmployeeTrackingSystem.Repository.RoleRepository;
+import com.example.EmployeeTrackingSystem.Repository.UserRepository;
+import com.example.EmployeeTrackingSystem.dto.AuthRequest;
+import com.example.EmployeeTrackingSystem.dto.AuthResponse;
+import com.example.EmployeeTrackingSystem.dto.RegisterRequest;
+import com.example.EmployeeTrackingSystem.entity.Role;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
-import com.example.demo.entity.User;
+import com.example.EmployeeTrackingSystem.entity.User;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,14 +26,14 @@ public class AuthController {
     private final RoleRepository roleRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-    private final com.example.demo.security.CustomUserDetailsService userDetailsService;
+    private final com.example.EmployeeTrackingSystem.security.CustomUserDetailsService userDetailsService;
 
     public AuthController(AuthenticationManager authManager,
                           UserRepository userRepo,
                           RoleRepository roleRepo,
                           PasswordEncoder passwordEncoder,
                           JwtUtils jwtUtils,
-                          com.example.demo.security.CustomUserDetailsService userDetailsService) {
+                          com.example.EmployeeTrackingSystem.security.CustomUserDetailsService userDetailsService) {
         this.authManager = authManager;
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;

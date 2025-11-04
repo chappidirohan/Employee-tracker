@@ -1,4 +1,4 @@
-package com.example.demo.Jwt;
+package com.example.EmployeeTrackingSystem.Jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

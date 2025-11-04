@@ -1,7 +1,7 @@
-package com.example.demo.security;
+package com.example.EmployeeTrackingSystem.security;
 
 import lombok.*;
-import com.example.demo.entity.User;
+import com.example.EmployeeTrackingSystem.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

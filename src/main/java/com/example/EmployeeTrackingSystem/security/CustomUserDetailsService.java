@@ -1,6 +1,6 @@
-package com.example.demo.security;
-import com.example.demo.Repository.UserRepository;
-import com.example.demo.entity.User;
+package com.example.EmployeeTrackingSystem.security;
+import com.example.EmployeeTrackingSystem.Repository.UserRepository;
+import com.example.EmployeeTrackingSystem.entity.User;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 

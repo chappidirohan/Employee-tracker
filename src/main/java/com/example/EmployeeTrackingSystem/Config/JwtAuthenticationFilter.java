@@ -1,8 +1,8 @@
-package com.example.demo.Config;
+package com.example.EmployeeTrackingSystem.Config;
 
 
-import com.example.demo.Jwt.JwtUtils;
-import com.example.demo.security.CustomUserDetailsService;
+import com.example.EmployeeTrackingSystem.Jwt.JwtUtils;
+import com.example.EmployeeTrackingSystem.security.CustomUserDetailsService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;

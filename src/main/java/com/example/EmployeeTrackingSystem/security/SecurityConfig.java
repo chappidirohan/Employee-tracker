@@ -1,6 +1,6 @@
-package com.example.demo.security;
+package com.example.EmployeeTrackingSystem.security;
 
-import com.example.demo.Jwt.JwtAuthenticationFilter;
+import com.example.EmployeeTrackingSystem.Jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

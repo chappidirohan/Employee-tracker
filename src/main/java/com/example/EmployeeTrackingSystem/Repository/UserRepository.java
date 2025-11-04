@@ -1,6 +1,6 @@
-package com.example.demo.Repository;
+package com.example.EmployeeTrackingSystem.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.entity.User;
+import com.example.EmployeeTrackingSystem.entity.User;
 
 
 import java.util.Optional;

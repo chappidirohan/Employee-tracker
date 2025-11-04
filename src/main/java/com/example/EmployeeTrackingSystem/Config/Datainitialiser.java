@@ -1,11 +1,11 @@
-package com.example.demo.Config;
+package com.example.EmployeeTrackingSystem.Config;
 
-import com.example.demo.Repository.RoleRepository;
-import com.example.demo.Repository.UserRepository;
-import com.example.demo.entity.Role;
+import com.example.EmployeeTrackingSystem.Repository.RoleRepository;
+import com.example.EmployeeTrackingSystem.Repository.UserRepository;
+import com.example.EmployeeTrackingSystem.entity.Role;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
-import com.example.demo.entity.User;
+import com.example.EmployeeTrackingSystem.entity.User;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
