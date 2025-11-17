@@ -1,8 +1,8 @@
 package com.example.EmployeeTrackingSystem.model;
 
-import com.example.EmployeeTrackingSystem.model.projectMembers;
-import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class projects {
     @JsonManagedReference
     private List<projectMembers> members = new ArrayList<>();
 
-    // Getters and Setters
+    // ------------------ Getters & Setters ------------------
 
     public Long getId() {
         return id;
@@ -110,7 +110,7 @@ public class projects {
         }
     }
 
-    public void addMember(@org.jetbrains.annotations.NotNull projectMembers member) {
+    public void addMember(projectMembers member) {
         member.setProject(this);
         this.members.add(member);
     }
