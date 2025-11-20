@@ -1,13 +1,14 @@
 package com.example.EmployeeTrackingSystem.Jwt;
 
+import com.example.EmployeeTrackingSystem.entity.Role;
+import com.example.EmployeeTrackingSystem.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,17 +24,23 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    // ============================
+    // Generate token using User Entity
+    // ============================
+    public String generateToken(User user) {
+
         Date now = new Date();
         Date expiry = new Date(now.getTime() + jwtExpirationMs);
 
-        String authorities = userDetails.getAuthorities().stream()
-                .map(a -> a.getAuthority())
-                .collect(Collectors.joining(","));
+        // Extract roles from User Entity
+        List<String> roles = user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .claim("roles", authorities)
+                .setSubject(user.getUsername())
+                .claim("roles", roles)  // <-- IMPORTANT: send list of roles
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)

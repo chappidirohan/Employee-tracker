@@ -1,78 +1,175 @@
 package com.example.EmployeeTrackingSystem.Controller;
 
-import com.example.EmployeeTrackingSystem.Jwt.JwtUtils;
 import com.example.EmployeeTrackingSystem.Repository.RoleRepository;
+
 import com.example.EmployeeTrackingSystem.Repository.UserRepository;
+
 import com.example.EmployeeTrackingSystem.dto.AuthRequest;
-import com.example.EmployeeTrackingSystem.dto.AuthResponse;
+
 import com.example.EmployeeTrackingSystem.dto.RegisterRequest;
+
 import com.example.EmployeeTrackingSystem.entity.Role;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
+
 import com.example.EmployeeTrackingSystem.entity.User;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.example.EmployeeTrackingSystem.Jwt.JwtUtils;
+
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.*;
 
 @RestController
+
 @RequestMapping("/api/auth")
+
+@CrossOrigin(origins = "http://localhost:5173")
+
 public class AuthController {
 
-    private final AuthenticationManager authManager;
-    private final UserRepository userRepo;
-    private final RoleRepository roleRepo;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
-    private final com.example.EmployeeTrackingSystem.security.CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
-    public AuthController(AuthenticationManager authManager,
-                          UserRepository userRepo,
-                          RoleRepository roleRepo,
+    private final RoleRepository roleRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtUtils jwtUtils;
+
+    public AuthController(UserRepository userRepository,
+
+                          RoleRepository roleRepository,
+
                           PasswordEncoder passwordEncoder,
-                          JwtUtils jwtUtils,
-                          com.example.EmployeeTrackingSystem.security.CustomUserDetailsService userDetailsService) {
-        this.authManager = authManager;
-        this.userRepo = userRepo;
-        this.roleRepo = roleRepo;
+
+                          JwtUtils jwtUtils) {
+
+        this.userRepository = userRepository;
+
+        this.roleRepository = roleRepository;
+
         this.passwordEncoder = passwordEncoder;
+
         this.jwtUtils = jwtUtils;
-        this.userDetailsService = userDetailsService;
+
     }
+
+    // =====================================================
+
+    // REGISTER (WORKING)
+
+    // =====================================================
 
     @PostMapping("/register")
-    public Map<String, Object> register(@RequestBody RegisterRequest req) {
-        if (userRepo.existsByUsername(req.getUsername())) {
-            return Map.of("error", "Username already taken");
-        }
-        if (userRepo.existsByEmail(req.getEmail())) {
-            return Map.of("error", "Email already used");
+
+    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+
+        if (userRepository.existsByUsername(req.getUsername())) {
+
+            return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
+
         }
 
-        // find user role
-        Role userRole = roleRepo.findByName("ROLE_USER").orElseThrow(() -> new RuntimeException("ROLE_USER not set"));
+        if (userRepository.existsByEmail(req.getEmail())) {
+
+            return ResponseEntity.badRequest().body(Map.of("error", "Email already exists"));
+
+        }
+
+        // Get or create role
+
+        Role role = roleRepository.findByName(req.getRole())
+
+                .orElseGet(() -> {
+
+                    Role r = new Role();
+
+                    r.setName(req.getRole());
+
+                    return roleRepository.save(r);
+
+                });
 
         User user = new User();
+
         user.setUsername(req.getUsername());
+
         user.setEmail(req.getEmail());
+
         user.setPassword(passwordEncoder.encode(req.getPassword()));
-        user.setRoles(Set.of(userRole));
-        userRepo.save(user);
-        return Map.of("message", "User registered");
+
+        user.setStatus(req.getStatus() == null ? "Active" : req.getStatus());
+
+        Set<Role> roles = new HashSet<>();
+
+        roles.add(role);
+
+        user.setRoles(roles);
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "User registered"));
+
     }
+
+    // =====================================================
+
+    // LOGIN (ADDING NOW)
+
+    // =====================================================
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+    public ResponseEntity<?> login(@RequestBody AuthRequest req) {
 
-        // load user details and generate token
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-        String token = jwtUtils.generateToken(userDetails);
+        // LOGIN USING EMAIL OR USERNAME
+        User user = userRepository.findByUsernameOrEmail(req.getUsername(), req.getUsername())
+                .orElse(null);
 
-        return new AuthResponse(token, "Bearer", userDetails.getUsername());
+        if (user == null) {
+            return ResponseEntity.status(401).body(Map.of("message", "User not found"));
+        }
+
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid password"));
+        }
+
+        String token = jwtUtils.generateToken(user);
+
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+
+    // =====================================================
+// GET ALL REGISTERED EMPLOYEES FOR ADMIN PAGE
+// =====================================================
+    @GetMapping("/registered-employees")
+    public ResponseEntity<?> getRegisteredEmployees() {
+
+        List<User> users = userRepository.findAll();
+
+        List<Map<String, Object>> employees = new ArrayList<>();
+
+        for (User u : users) {
+            Map<String, Object> emp = new HashMap<>();
+
+            emp.put("id", u.getId());
+            emp.put("name", u.getUsername());
+            emp.put("email", u.getEmail());
+
+            // DEFAULT STATUS = Active
+            emp.put("status", u.getStatus() == null ? "Active" : u.getStatus());
+
+            // ADD DESIGNATION (You added this field in your User entity)
+            emp.put("designation", u.getDesignation());
+
+            // REMOVE ROLE from UI (as you requested)
+            // role is no longer sent to UI
+
+            employees.add(emp);
+        }
+
+        return ResponseEntity.ok(employees);
     }
 }
+
