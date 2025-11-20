@@ -24,7 +24,7 @@ public class employee {
 
     private String password;
 
-    public employee() {}
+
 
     public employee(String name, String role, String email, String status, String password, String designation) {
         this.name = name;
