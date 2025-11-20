@@ -2,7 +2,6 @@ package com.example.EmployeeTrackingSystem.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Set;
 
 @Entity
@@ -11,18 +10,26 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable=false)
-    private String password; // bcrypt hashed
+    @Column(nullable = false)
+    private String password;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String status;
+
+    // ✅ ADD THIS FIELD
+    @Column(nullable = true)
+    private String designation;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
